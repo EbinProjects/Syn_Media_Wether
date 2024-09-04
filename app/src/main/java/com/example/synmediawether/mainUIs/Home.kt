@@ -12,10 +12,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,6 +45,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun HomeScreenUI(viewmodel: WetherViewmodel, navController: NavHostController,modifier: Modifier = Modifier) {
     val weatherData by viewmodel.weatherResponses.collectAsState()
+    val progress by viewmodel.progress.observeAsState()
     val clouds = remember { mutableStateOf(WeatherItem()) }
 
     LaunchedEffect(weatherData){
@@ -55,6 +58,7 @@ fun HomeScreenUI(viewmodel: WetherViewmodel, navController: NavHostController,mo
         .fillMaxSize()
         .background(brush = BackgroundTheme())) {
         BackBlur()
+
         IconButtons {
             viewmodel.logittude?.let { viewmodel.lattitude?.let { it1 -> viewmodel.fetchWeather(lattitude = it1, logittude = it) } }
         }
@@ -234,7 +238,9 @@ fun HomeScreenUI(viewmodel: WetherViewmodel, navController: NavHostController,mo
             }
 
         }
-
+        if (progress == true) {
+            Progress()
+        }
     }
 }
 

@@ -102,7 +102,7 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("MissingPermission")
     private fun accessUserLocation() {
         if (isLocationEnabled()) {
-            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000) // 5 seconds
+            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000) // 5 seconds
                 .setMinUpdateIntervalMillis(500) // 2 seconds
                 .build()
 

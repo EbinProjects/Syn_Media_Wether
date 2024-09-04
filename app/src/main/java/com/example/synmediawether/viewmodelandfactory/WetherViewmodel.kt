@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.synmediawether.Utilsss.ApiResponse
@@ -29,6 +30,7 @@ class WetherViewmodel(
    private var job : Job? = null
     var lattitude : Double? = null
     var logittude : Double? = null
+    var progress  = MutableLiveData(true)
     private val _weatherResponses = MutableStateFlow(WetherResponse())
     val weatherResponses: StateFlow<WetherResponse> get() = _weatherResponses
 
@@ -38,12 +40,16 @@ class WetherViewmodel(
          job = viewModelScope.launch{
             apiRepository.getWeather(longitude = logittude, latitude = lattitude, key = Constants.API_KEY).collect { response ->
                when(response){
-                  is ApiResponse.Loading ->{}
+                  is ApiResponse.Loading ->{
+                      progress.value = true
+                  }
                    is ApiResponse.Success ->{
+                       progress.value = false
                        _weatherResponses.value = response.data.apply { time = Presentations.getDate()  }
                        storeLocally(response.data.apply { time = Presentations.getDate()  })
                    }
                    is ApiResponse.Error ->{
+                       progress.value = false
                        val data = sharedPreferences.getString("Local","")
                            val gson = Gson()
                      val localData = if (data?.isNotEmpty() == true) gson.fromJson(data, WetherResponse::class.java) else WetherResponse()
